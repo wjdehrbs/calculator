@@ -1,15 +1,34 @@
 import java.util.Scanner
 
-class Calculator {
-    fun calculate(num1: Double, num2: Double, operator: String): Double {
-        return when (operator) {
-            "+" -> num1 + num2
-            "-" -> num1 - num2
-            "*" -> num1 * num2
-            "/" -> num1 / num2
-            else -> throw IllegalArgumentException("실패!")
-        }
+class Calculator(private val operation: AbstractOperation) {
+    fun calculate(num1: Double, num2: Double): Double { return operation.operate(num1, num2)
+}
+}
+abstract class AbstractOperation {
+    abstract fun operate(num1: Double, num2: Double): Double
+}
+
+class AddOperation : AbstractOperation() {
+    override fun operate(num1: Double, num2: Double): Double {
+        return num1 + num2
     }
+}
+
+class SubOperation : AbstractOperation() {
+    override fun operate(num1: Double, num2: Double): Double {
+        return num1 - num2
+    }
+}
+
+class MulOperation : AbstractOperation() {
+    override fun operate(num1: Double, num2: Double): Double {
+        return num1 * num2
+    }
+}
+
+class DivOperation : AbstractOperation() {
+    override fun operate(num1: Double, num2: Double): Double {return num1 / num2
+        }
 }
 
 fun main() {
@@ -25,9 +44,16 @@ fun main() {
 
     print("연산자를 선택하세요 (+, -, *, /): ")
     val operator = scanner.next()
-
-    val calculator = Calculator()
-    val result = calculator.calculate(num1, num2, operator)
+    val operation = when (operator) {
+        "+" -> AddOperation()
+        "-" -> SubOperation()
+        "*" -> MulOperation()
+        "/" -> DivOperation()
+        else -> throw IllegalArgumentException("잘못된 연산자입니다")
+    }
+    val calculator = Calculator(operation)
+    val result = calculator.calculate(num1,num2)
 
     println("$num1 와 $num2 의 $operator 한 결과는 $result 입니다")
+
 }
